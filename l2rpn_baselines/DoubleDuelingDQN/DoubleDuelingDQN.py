@@ -359,6 +359,12 @@ class DoubleDuelingDQN(AgentWithConverter):
         # Batch train
         loss = self.Qmain.train_on_batch(input_t, Q, w_batch)
 
+        try:
+            s, u, v = tf.linalg.svd(Q)
+            nuclear_norm = tf.reduce_sum(s)
+            print(s.shape)
+            loss += LRR_lambda * nuclear_norm
+
         # Update PER buffer
         priorities = self.Qmain.batch_sq_error
         # Can't be zero, no upper limit
