@@ -364,6 +364,8 @@ class DoubleDuelingDQN(AgentWithConverter):
             nuclear_norm = tf.reduce_sum(s)
             print(s.shape)
             loss += LRR_lambda * nuclear_norm
+        except NameError:
+            print("LRR_lambda not defined")
 
         # Update PER buffer
         priorities = self.Qmain.batch_sq_error
