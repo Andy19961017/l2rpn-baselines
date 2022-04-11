@@ -24,7 +24,8 @@ class DoubleDuelingDQN(AgentWithConverter):
                  observation_space,
                  action_space,
                  name=__name__,
-                 is_training=False):
+                 is_training=False,
+                 LRR_lambda=0):
         # Call parent constructor
         AgentWithConverter.__init__(self, action_space,
                                     action_space_converter=IdToAct)
@@ -68,6 +69,9 @@ class DoubleDuelingDQN(AgentWithConverter):
                                          learning_rate=self.lr,
                                          learning_rate_decay_steps=cfg.LR_DECAY_STEPS,
                                          learning_rate_decay_rate=cfg.LR_DECAY_RATE)
+        # LRR
+        self.LRR_lambda = LRR_lambda
+        
         # Setup training vars if needed
         if self.is_training:
             self._init_training()
@@ -359,16 +363,13 @@ class DoubleDuelingDQN(AgentWithConverter):
         # Batch train
         loss = self.Qmain.train_on_batch(input_t, Q, w_batch)
 
-        try:
-            s, u, v = tf.linalg.svd(Q)
-            nuclear_norm = tf.reduce_sum(s)
-            print("Original loss: ")
-            tf.print(loss)
-            print("LRR: ")
-            tf.print(LRR_lambda * nuclear_norm)
-            loss += LRR_lambda * nuclear_norm
-        except NameError:
-            print("LRR_lambda not defined")
+        s, u, v = tf.linalg.svd(Q)
+        nuclear_norm = tf.reduce_sum(s)
+        print("Original loss: ")
+        tf.print(loss)
+        print("LRR term: ")
+        tf.print(self.LRR_lambda * nuclear_norm)
+        loss += self.LRR_lambda * nuclear_norm
 
         # Update PER buffer
         priorities = self.Qmain.batch_sq_error
