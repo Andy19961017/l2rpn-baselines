@@ -362,7 +362,10 @@ class DoubleDuelingDQN(AgentWithConverter):
         try:
             s, u, v = tf.linalg.svd(Q)
             nuclear_norm = tf.reduce_sum(s)
-            print(s.shape)
+            print("Original loss: ")
+            tf.print(loss)
+            print("LRR: ")
+            tf.print(LRR_lambda * nuclear_norm)
             loss += LRR_lambda * nuclear_norm
         except NameError:
             print("LRR_lambda not defined")
