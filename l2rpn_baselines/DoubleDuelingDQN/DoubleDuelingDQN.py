@@ -370,6 +370,7 @@ class DoubleDuelingDQN(AgentWithConverter):
         print("LRR term: ")
         tf.print(self.LRR_lambda * nuclear_norm)
         loss += self.LRR_lambda * nuclear_norm
+        print("name=: " + self.name)
 
         # Update PER buffer
         priorities = self.Qmain.batch_sq_error
