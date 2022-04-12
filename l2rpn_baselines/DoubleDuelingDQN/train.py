@@ -69,7 +69,8 @@ def train(env,
           num_frames = DEFAULT_N_FRAMES,
           batch_size= DEFAULT_BATCH_SIZE,
           learning_rate= DEFAULT_LR,
-          verbose=DEFAULT_VERBOSE):
+          verbose=DEFAULT_VERBOSE,
+          LRR_lambda=0):
 
     # Set config
     D3QNConfig.LR = learning_rate
@@ -85,7 +86,8 @@ def train(env,
     agent = D3QNAgent(env.observation_space,
                       env.action_space,
                       name=name,
-                      is_training=True)
+                      is_training=True,
+                      LRR_lambda=LRR_lambda)
 
     if load_path is not None:
         agent.load(load_path)
